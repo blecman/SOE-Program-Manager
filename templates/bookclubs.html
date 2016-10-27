@@ -1,0 +1,86 @@
+{% extends "layout.html" %}
+{% block body %}
+
+  <ul class="nav nav-tabs">
+    <li role="presentation"><a href="{{ url_for('students_page')}}">Students</a></li>
+    <li role="presentation"><a href="{{ url_for('keynotes_page')}}">Keynotes</a></li>
+    <li role="presentation" class="active"><a href="{{ url_for('bookclubs_page') }}">Book Clubs</a></li>
+    <li role="presentation"><a href="{{ url_for('service_learnings_page') }}">Service Learning</a></li>
+  </ul>
+
+  <center>
+    <p>{{ title }}</p>
+  </center>
+
+  <div class="row">
+    <div class="col-md-9">
+
+      <br/>
+      <form action="{{ url_for('bookclubs_page') }}" method="get">
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="Search for..." name="q">
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="submit">Filter</button>
+          </span>
+        </div>
+      </form>
+      <br/>
+
+      <table style="width:100%" class="table table-bordered">
+        <tr>
+          <th>ID</th>
+          <th>Year</th>
+          <th>Semeseter</th>
+          <th>Book</th>
+          <th>Students</th>
+        </tr>
+
+        {% for bookclub in bookclubs %}
+          <tr>
+            <td>{{ bookclub.id }} </td>
+            <td>{{ bookclub.year }} </td>
+            <td>
+              {% if bookclub.fallSemester %}
+                Fall
+              {% else %}
+                Spring
+              {% endif %}
+            </td>
+            <td>{{ bookclub.book }}</td>
+            <td><a href="{{ url_for('students_page', id=bookclub.id) }}"> Students </a> </td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+
+    <div class="col-md-3">
+      <h3>Add Book Club</h3>
+      <form action="{{ url_for('bookclubs_page') }}" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+          <label>Year</label>
+          <input type="number" class="form-control" name="year" placeholder="2016">
+        </div>
+        <div class="form-group">
+          <label>Semester</label>
+          <select name="fallSemester" class="form-control">
+            <option value="true">Fall</option>
+            <option value="false">Spring</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Book</label>
+          <input type="text" class="form-control" name="book" placeholder="Title">
+        </div>
+        <div class="form-group">
+          <label>Roster (CSV File) <br/> </label>
+          <input type="file" name="file" />
+          <p class="help-block">Must contain columns: RUID. May contain columns: First Name, Last Name, Class Year</p>
+        </div>
+
+        <button type="submit" class="btn btn-default">Upload</button>
+      </form>
+    </div>
+  </div>
+
+
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends "layout.html" %}
+{% block body %}
+
+  <ul class="nav nav-tabs">
+    <li role="presentation" class="active"><a href="{{ url_for('students_page')}}">Students</a></li>
+    <li role="presentation"><a href="{{ url_for('keynotes_page')}}">Keynotes</a></li>
+    <li role="presentation"><a href="{{ url_for('bookclubs_page') }}">Book Clubs</a></li>
+    <li role="presentation"><a href="{{ url_for('service_learnings_page') }}">Service Learning</a></li>
+  </ul>
+
+  <center>
+    <h2>{{ title }}</h2>
+  </center>
+
+  <div class="row">
+    <div class="col-md-9">
+      {% if programId == None %}
+        <br/>
+        <form action="{{ url_for('students_page') }}" method="get">
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search for..." name="q">
+            <span class="input-group-btn">
+              <button class="btn btn-default" type="submit">Filter</button>
+            </span>
+          </div>
+        </form>
+        <br/>
+      {% endif %}
+      <table style="width:100%" class="table table-bordered">
+        <tr>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>RUID</th>
+          <th>Class Year</th>
+          <th>Key Notes</th>
+          <th>Book Clubs</th>
+          <th>Service Learnings</th>
+          <th>Programs</th>
+        </tr>
+
+        {% for student in students %}
+          <tr>
+            <td>{{ student.firstname }} </td>
+            <td>{{ student.lastname }} </td>
+            <td>{{ student.ruid }} </td>
+            <td>{{ student.classYear }} </td>
+            <td>{{ student.keynoteCount }} </td>
+            <td>{{ student.bookclubCount }} </td>
+            <td>{{ student.serviceLearningCount }} </td>
+            <td><a href="{{ url_for('programs_page', ruid=student.ruid) }}"> Programs </a> </td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+
+    <div class="col-md-3">
+      {% if programId == None %}
+        <h3>Add Students</h3>
+        <form action="{{ url_for('students_page') }}" method="post" enctype="multipart/form-data">
+          <div class="form-group">
+            <label>Roster (CSV File) <br/> </label>
+            <input type="file" name="file" />
+            <p class="help-block">Must contain columns: RUID. May contain columns: First Name, Last Name, Class Year</p>
+          </div>
+
+          <button type="submit" class="btn btn-default">Upload</button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+
+
+{% endblock %}
