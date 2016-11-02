@@ -92,5 +92,3 @@ ENV/
 #CSV and Database
 *.csv
 *.db
-Procfile
-Procfile.windows
