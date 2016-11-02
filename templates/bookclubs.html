@@ -4,8 +4,8 @@
   <ul class="nav nav-tabs">
     <li role="presentation"><a href="{{ url_for('students_page')}}">Students</a></li>
     <li role="presentation"><a href="{{ url_for('keynotes_page')}}">Keynotes</a></li>
-    <li role="presentation" class="active"><a href="{{ url_for('bookclubs_page') }}">Book Clubs</a></li>
     <li role="presentation"><a href="{{ url_for('service_learnings_page') }}">Service Learning</a></li>
+    <li role="presentation" class="active"><a href="{{ url_for('bookclubs_page') }}">Book Clubs</a></li>
   </ul>
 
   <center>
@@ -15,15 +15,29 @@
   <div class="row">
     <div class="col-md-9">
 
+
       <br/>
-      <form action="{{ url_for('bookclubs_page') }}" method="get">
-        <div class="input-group">
-          <input type="text" class="form-control" placeholder="Search for..." name="q">
-          <span class="input-group-btn">
-            <button class="btn btn-default" type="submit">Filter</button>
-          </span>
+      <div class="row">
+        <div class="col-md-11">
+          <form action="{{ url_for('bookclubs_page') }}" method="get">
+            <div class="input-group">
+              <input type="text" class="form-control" placeholder="Search for..." name="q">
+              <span class="input-group-btn">
+                <button class="btn btn-default" type="submit">Filter</button>
+              </span>
+            </div>
+          </form>
         </div>
-      </form>
+
+        <div class="col-md-1">
+          <a href="{{ url_for('bookclubs_page', q=q, download='y') }}">
+            <button type="button" class="btn btn-default" aria-label="Left Align">
+              <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+            </button>
+          </a>
+        </div>
+      </div>
+      
       <br/>
 
       <table style="width:100%" class="table table-bordered">
@@ -33,21 +47,23 @@
           <th>Semeseter</th>
           <th>Book</th>
           <th>Students</th>
+          <th>Delete</th>
         </tr>
 
         {% for bookclub in bookclubs %}
           <tr>
-            <td>{{ bookclub.id }} </td>
-            <td>{{ bookclub.year }} </td>
+            <td>{{ bookclub.Id }} </td>
+            <td>{{ bookclub.Year }} </td>
+            <td>{{ bookclub.Semester }}</td>
+            <td>{{ bookclub.Book }}</td>
+            <td><a href="{{ url_for('students_page', id=bookclub.Id) }}"> Students </a> </td>
             <td>
-              {% if bookclub.fallSemester %}
-                Fall
-              {% else %}
-                Spring
-              {% endif %}
+              <center><a href="{{ url_for('bookclubs_page', q=q, delete=bookclub.Id) }}" >
+                <button type="button" class="btn btn-default" aria-label="Left Align">
+                  <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                </button>
+              </a></center>
             </td>
-            <td>{{ bookclub.book }}</td>
-            <td><a href="{{ url_for('students_page', id=bookclub.id) }}"> Students </a> </td>
           </tr>
         {% endfor %}
       </table>
@@ -74,7 +90,12 @@
         <div class="form-group">
           <label>Roster (CSV File) <br/> </label>
           <input type="file" name="file" />
-          <p class="help-block">Must contain columns: RUID. May contain columns: First Name, Last Name, Class Year</p>
+          <p class="help-block">
+            <b>Must contain columns:</b> <br/>
+            RUID, Discussion Leader (Yes or No values) <br/>
+            <b>May contain columns:</b><br/>
+            First Name, Last Name, Class Year
+          </p>
         </div>
 
         <button type="submit" class="btn btn-default">Upload</button>

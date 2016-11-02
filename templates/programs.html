@@ -3,8 +3,8 @@
   <ul class="nav nav-tabs">
     <li role="presentation"><a href="{{ url_for('students_page')}}">Students</a></li>
     <li role="presentation"><a href="{{ url_for('keynotes_page')}}">Keynotes</a></li>
-    <li role="presentation"><a href="{{ url_for('bookclubs_page') }}">Book Clubs</a></li>
     <li role="presentation"><a href="{{ url_for('service_learnings_page') }}">Service Learning</a></li>
+    <li role="presentation"><a href="{{ url_for('bookclubs_page') }}">Book Clubs</a></li>
   </ul>
 
   <center>
@@ -16,15 +16,17 @@
   <table style="width:100%" class="table table-bordered">
     <tr>
       <th>ID</th>
+      <td>Title</th>
       <th>Description</th>
       <th>Students</th>
     </tr>
 
     {% for serviceLearning in programs['serviceLearning'] %}
       <tr>
-        <td>{{ serviceLearning.id }} </td>
-        <td>{{ serviceLearning.description }} </td>
-        <td><a href="{{ url_for('students_page', id=serviceLearning.id) }}"> Students </a> </td>
+        <td>{{ serviceLearning.Id }} </td>
+        <td>{{ serviceLearning.Title }}</td>
+        <td>{{ serviceLearning.Description }} </td>
+        <td><a href="{{ url_for('students_page', id=serviceLearning.Id) }}"> Students </a> </td>
       </tr>
     {% endfor %}
   </table>
@@ -38,22 +40,18 @@
       <th>Year</th>
       <th>Semeseter</th>
       <th>Book</th>
-      <th>Students</th>
+      <th>Discussion Leader</th>
+      <th>All Students</th>
     </tr>
 
     {% for bookclub in programs['bookclub'] %}
       <tr>
-        <td>{{ bookclub.id }} </td>
-        <td>{{ bookclub.year }} </td>
-        <td>
-          {% if bookclub.fallSemester %}
-            Fall
-          {% else %}
-            Spring
-          {% endif %}
-        </td>
-        <td>{{ bookclub.book }}</td>
-        <td><a href="{{ url_for('students_page', id=bookclub.id) }}"> Students </a> </td>
+        <td>{{ bookclub.Id }} </td>
+        <td>{{ bookclub.Year }} </td>
+        <td>{{ bookclub.Semester}}</td>
+        <td>{{ bookclub.Book }}</td>
+        <td>{{ bookclub['Discussion Leader'] }}</td>
+        <td><a href="{{ url_for('students_page', id=bookclub.Id) }}"> Students </a> </td>
       </tr>
     {% endfor %}
   </table>
@@ -70,10 +68,10 @@
 
     {% for keynote in programs['keynote'] %}
       <tr>
-        <td>{{ keynote.id }} </td>
-        <td>{{ keynote.speaker }} </td>
-        <td>{{ keynote.date }} </td>
-        <td><a href="{{ url_for('students_page', id=keynote.id) }}"> Students </a> </td>
+        <td>{{ keynote.Id }} </td>
+        <td>{{ keynote.Speaker }} </td>
+        <td>{{ keynote.Date }} </td>
+        <td><a href="{{ url_for('students_page', id=keynote.Id) }}"> Students </a> </td>
       </tr>
     {% endfor %}
   </table>

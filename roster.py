@@ -4,6 +4,7 @@ from models import Student
 
 def csvToRoster(f):
     roster = []
+    studentData = {}
 
     stream = io.StringIO(f.stream.read().decode("UTF8"), newline=None)
 
@@ -48,7 +49,15 @@ def csvToRoster(f):
                 student.classYear = classYear
 
         roster.append(student)
+
+        studentDatum = {}
+        if "Discussion Leader" in row:
+            studentDatum['discussionLeader'] = True if row["Discussion Leader"].lower() == "yes" else False
+        if "Description" in row:
+            studentDatum["description"] = row["Description"]
+        
+        studentData[ruid] = studentDatum
         rowCount += 1
         
     db.session.commit()
-    return roster
+    return roster, studentData

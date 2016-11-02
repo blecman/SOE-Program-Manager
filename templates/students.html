@@ -4,8 +4,8 @@
   <ul class="nav nav-tabs">
     <li role="presentation" class="active"><a href="{{ url_for('students_page')}}">Students</a></li>
     <li role="presentation"><a href="{{ url_for('keynotes_page')}}">Keynotes</a></li>
-    <li role="presentation"><a href="{{ url_for('bookclubs_page') }}">Book Clubs</a></li>
     <li role="presentation"><a href="{{ url_for('service_learnings_page') }}">Service Learning</a></li>
+    <li role="presentation"><a href="{{ url_for('bookclubs_page') }}">Book Clubs</a></li>
   </ul>
 
   <center>
@@ -14,18 +14,30 @@
 
   <div class="row">
     <div class="col-md-9">
-      {% if programId == None %}
-        <br/>
-        <form action="{{ url_for('students_page') }}" method="get">
-          <div class="input-group">
-            <input type="text" class="form-control" placeholder="Search for..." name="q">
-            <span class="input-group-btn">
-              <button class="btn btn-default" type="submit">Filter</button>
-            </span>
-          </div>
-        </form>
-        <br/>
-      {% endif %}
+
+      <div class="row">
+        <div class="col-md-11">
+          {% if programId == None %}
+            <form action="{{ url_for('students_page') }}" method="get">
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search for..." name="q">
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="submit">Filter</button>
+                </span>
+              </div>
+            </form>
+          {% endif %}
+        </div>
+        <div class="col-md-1">
+          <a href="{{ url_for('students_page', q=q, download='y', id=programId) }}">
+            <button type="button" class="btn btn-default" aria-label="Left Align">
+              <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+            </button>
+          </a>
+        </div>
+      </div>
+      <br/>
+
       <table style="width:100%" class="table table-bordered">
         <tr>
           <th>First Name</th>
@@ -33,21 +45,39 @@
           <th>RUID</th>
           <th>Class Year</th>
           <th>Key Notes</th>
-          <th>Book Clubs</th>
           <th>Service Learnings</th>
+          <th>Book Clubs</th>
+          <th>Discussions Lead</th>
+
+          {% if students|length > 0 and 'Discussion Leader' in students[0] %}
+          <th>Discussion Leader</th>
+          {% endif %}
+
+          {% if students|length > 0 and 'Description' in students[0] %}
+          <th>Description</th>
+          {% endif %}
+
           <th>Programs</th>
         </tr>
 
         {% for student in students %}
           <tr>
-            <td>{{ student.firstname }} </td>
-            <td>{{ student.lastname }} </td>
-            <td>{{ student.ruid }} </td>
-            <td>{{ student.classYear }} </td>
-            <td>{{ student.keynoteCount }} </td>
-            <td>{{ student.bookclubCount }} </td>
-            <td>{{ student.serviceLearningCount }} </td>
-            <td><a href="{{ url_for('programs_page', ruid=student.ruid) }}"> Programs </a> </td>
+            <td>{{ student['First Name'] }} </td>
+            <td>{{ student['Last Name'] }} </td>
+            <td>{{ student['RUID'] }} </td>
+            <td>{{ student['Class Year'] }} </td>
+            <td>{{ student['Key Notes'] }} </td>
+            <td>{{ student['Service Learnings'] }} </td>
+            <td>{{ student['Book Clubs'] }} </td>
+            <td>{{ student['Discussions Lead'] }} </td>
+            {% if 'Discussion Leader' in student %}
+            <td>{{ student['Discussion Leader'] }}</td>
+            {% endif %}
+
+            {% if 'Description' in student %}
+            <td>{{ student['Description'] }}</td>
+            {% endif %}
+            <td><a href="{{ url_for('programs_page', ruid=student['RUID']) }}"> Programs </a> </td>
           </tr>
         {% endfor %}
       </table>
@@ -60,7 +90,12 @@
           <div class="form-group">
             <label>Roster (CSV File) <br/> </label>
             <input type="file" name="file" />
-            <p class="help-block">Must contain columns: RUID. May contain columns: First Name, Last Name, Class Year</p>
+            <p class="help-block">
+              <b>Must contain columns:</b><br/>
+              RUID <br/>
+              <b>May contain columns:</b> <br/>
+              First Name, Last Name, Class Year
+            </p>
           </div>
 
           <button type="submit" class="btn btn-default">Upload</button>

@@ -6,6 +6,23 @@ association_table = db.Table('association',
     db.Column('program_id', db.Integer, db.ForeignKey('program.id'))
 )
 
+class Attendance(db.Model):
+    __tablename__ = 'attendance'
+    studentId = db.Column(db.Integer, db.ForeignKey('student.ruid'), primary_key=True)
+    programId = db.Column(db.Integer, db.ForeignKey('program.id'), primary_key=True)
+    leader = db.Column(db.Boolean, default=False)
+    description = db.Column(db.Text)
+
+    program = db.relationship("Program", back_populates="attendances")
+    student = db.relationship("Student", back_populates="attendances")
+
+    def __init__ (self, student, program, description="", leader=False):
+
+        self.program = program
+        self.description = description
+        self.leader = leader
+        self.student = student
+
 class Student(db.Model):
     __tablename__ = 'student'
 
@@ -13,11 +30,7 @@ class Student(db.Model):
     firstname = db.Column(db.String(256))
     lastname = db.Column(db.String(256))
     classYear = db.Column(db.Integer)
-
-    programs = db.relationship(
-        "Program",
-        secondary=association_table,
-        back_populates="students")
+    attendances = db.relationship("Attendance", back_populates="student")
 
     def __init__ (self, ruid, firstname, lastname, classYear):
         self.ruid = ruid
@@ -33,10 +46,7 @@ class Program(db.Model):
     #type field keeps track of program type for subclasses
     type = db.Column(db.String(30))
 
-    students = db.relationship(
-        "Student",
-        secondary=association_table,
-        back_populates="programs")
+    attendances = db.relationship("Attendance", back_populates="program", cascade="save-update, merge, delete")
 
     __mapper_args__ = {
         'polymorphic_identity':'program',
@@ -86,14 +96,14 @@ class ServiceLearning(Program):
     __tablename__ = 'serviceLearning'
 
     id = db.Column(db.Integer, db.ForeignKey('program.id'), primary_key=True)
-    description = db.Column(db.Text)
+    title = db.Column(db.Text)
 
     __mapper_args__ = {
         'polymorphic_identity':'serviceLearning'
     }
 
-    def __init__ (self, description):
-        self.description = description
+    def __init__ (self, title):
+        self.title = title
 
     def string(self):
         return "Service Learning({})".format(self.id)

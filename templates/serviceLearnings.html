@@ -4,8 +4,8 @@
   <ul class="nav nav-tabs">
     <li role="presentation"><a href="{{ url_for('students_page')}}">Students</a></li>
     <li role="presentation"><a href="{{ url_for('keynotes_page')}}">Keynotes</a></li>
-    <li role="presentation"><a href="{{ url_for('bookclubs_page') }}">Book Clubs</a></li>
     <li role="presentation" class="active"><a href="{{ url_for('service_learnings_page') }}">Service Learning</a></li>
+    <li role="presentation"><a href="{{ url_for('bookclubs_page') }}">Book Clubs</a></li>
   </ul>
 
   <center>
@@ -16,28 +16,49 @@
     <div class="col-md-9">
 
       <br/>
-      <form action="{{ url_for('service_learnings_page') }}" method="get">
-        <div class="input-group">
-          <input type="text" class="form-control" placeholder="Search for...">
-          <span class="input-group-btn">
-            <button class="btn btn-default" type="submit">Filter</button>
-          </span>
+
+
+      <div class="row">
+        <div class="col-md-11">
+          <form action="{{ url_for('service_learnings_page') }}" method="get">
+            <div class="input-group">
+              <input type="text" class="form-control" placeholder="Search for...">
+              <span class="input-group-btn">
+                <button class="btn btn-default" type="submit">Filter</button>
+              </span>
+            </div>
+          </form>
         </div>
-      </form>
+        <div class="col-md-1">
+          <a href="{{ url_for('service_learnings_page', q=q, download='y') }}">
+            <button type="button" class="btn btn-default" aria-label="Left Align">
+              <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+            </button>
+          </a>
+        </div>
+      </div>
       <br/>
 
       <table style="width:100%" class="table table-bordered">
         <tr>
           <th>ID</th>
-          <th>Description</th>
+          <th>Title</th>
           <th>Students</th>
+          <th>Delete</th>
         </tr>
 
         {% for serviceLearning in serviceLearnings %}
           <tr>
-            <td>{{ serviceLearning.id }} </td>
-            <td>{{ serviceLearning.description }} </td>
-            <td><a href="{{ url_for('students_page', id=serviceLearning.id) }}"> Students </a> </td>
+            <td>{{ serviceLearning.Id }} </td>
+            <td>{{ serviceLearning.Title }} </td>
+            <td><a href="{{ url_for('students_page', id=serviceLearning.Id) }}"> Students </a> </td>
+            <td>
+              <center><a href="{{ url_for('service_learnings_page', q=q, delete=serviceLearning.Id) }}" >
+                <button type="button" class="btn btn-default" aria-label="Left Align">
+                  <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                </button>
+              </a></center>
+            </td>
           </tr>
         {% endfor %}
       </table>
@@ -46,15 +67,21 @@
     <div class="col-md-3">
       <h3>Add Service Learning</h3>
       <form action="{{ url_for('service_learnings_page') }}" method="post" enctype="multipart/form-data">
+
           <div class="form-group">
-            <label>Description</label>
-            <textarea class="form-control" rows="3" name="description"></textarea>
+            <label >Title</label>
+            <input type="text" class="form-control" placeholder="Title" name="title">
           </div>
 
           <div class="form-group">
             <label>Roster (CSV File) <br/> </label>
             <input type="file" name="file" />
-            <p class="help-block">Must contain columns: RUID. May contain columns: First Name, Last Name, Class Year</p>
+            <p class="help-block">
+              <b>Must contain columns:</b> <br/>
+              RUID, Description <br/>
+              <b>May contain columns:</b> <br/>
+              First Name, Last Name, Class Year
+            </p>
           </div>
 
           <button type="submit" class="btn btn-default">Upload</button>
